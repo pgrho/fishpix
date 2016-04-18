@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Shipwreck.FishPix.Controllers
+namespace Shipwreck.FishPix.Models
 {
     public enum MatchOperator
     {

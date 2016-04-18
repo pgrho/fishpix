@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shipwreck.FishPix.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,9 +16,9 @@ namespace Shipwreck.FishPix.Controllers
         public async Task<ActionResult> Image(
                                    int start = 1,
                                    string name = null, MatchOperator nameOperator = MatchOperator.Equal,
+                                   string species = null, MatchOperator speciesOperator = MatchOperator.Equal,
                                    string japaneseFamily = null, MatchOperator japaneseFamilyOperator = MatchOperator.Equal,
-                                   string family = null, MatchOperator familyOperator = MatchOperator.Equal,
-                                   string species = null, MatchOperator speciesOperator = MatchOperator.Equal)
+                                   string family = null, MatchOperator familyOperator = MatchOperator.Equal)
         {
             var sb = new StringBuilder("http://fishpix.kahaku.go.jp/fishimage/search?START=");
             sb.Append(start);
@@ -53,7 +54,7 @@ namespace Shipwreck.FishPix.Controllers
                     l.Add(f);
                 }
 
-                return Json(l, JsonRequestBehavior.AllowGet);
+                return Json(new FishImageResult() { Items = l }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -77,6 +78,7 @@ namespace Shipwreck.FishPix.Controllers
 
                 switch (c)
                 {
+                    #region case [A-Z]:
                     case 'A':
                     case 'B':
                     case 'C':
@@ -103,7 +105,9 @@ namespace Shipwreck.FishPix.Controllers
                     case 'X':
                     case 'Y':
                     case 'Z':
+                    #endregion
 
+                    #region case [a-z]:
                     case 'a':
                     case 'b':
                     case 'c':
@@ -130,7 +134,9 @@ namespace Shipwreck.FishPix.Controllers
                     case 'x':
                     case 'y':
                     case 'z':
+                    #endregion
 
+                    #region case [0-9]:
                     case '0':
                     case '1':
                     case '2':
@@ -141,7 +147,7 @@ namespace Shipwreck.FishPix.Controllers
                     case '7':
                     case '8':
                     case '9':
-
+                    #endregion
 
                     case '!':
                     case '(':

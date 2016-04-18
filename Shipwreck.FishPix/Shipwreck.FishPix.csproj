@@ -60,9 +60,10 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\MatchOperator.cs" />
+    <Compile Include="Models\FishImageResult.cs" />
+    <Compile Include="Models\MatchOperator.cs" />
     <Compile Include="Controllers\FishController.cs" />
-    <Compile Include="Controllers\FishImage.cs" />
+    <Compile Include="Models\FishImage.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
