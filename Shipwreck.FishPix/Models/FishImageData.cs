@@ -67,6 +67,11 @@ namespace Shipwreck.FishPix.Models
                 var rect = GetBounds(bmp);
                 f.CroppedWidth = (short)rect.Width;
                 f.CroppedHeight = (short)rect.Height;
+
+                var codec = ImageCodecInfo.GetImageEncoders().First(_ => _.MimeType == "image/jpeg");
+                var saveParam = new EncoderParameters(1);
+                saveParam.Param[0] = new EncoderParameter(Encoder.Quality, 99L);
+
                 if (f.OriginalWidth != f.CroppedWidth || f.OriginalHeight != f.CroppedHeight)
                 {
                     using (var other = new Bitmap(rect.Width, rect.Height))
@@ -76,14 +81,19 @@ namespace Shipwreck.FishPix.Models
                             g.DrawImage(bmp, new Rectangle(0, 0, other.Width, other.Height), rect, GraphicsUnit.Pixel);
                         }
 
-                        var ps = new EncoderParameters(1);
-                        ps.Param[0] = new EncoderParameter(Encoder.Quality, 99L);
-
                         using (var ms = new MemoryStream())
                         {
-                            other.Save(ms, ImageCodecInfo.GetImageEncoders().First(_ => _.MimeType == "image/jpeg"), ps);
+                            other.Save(ms, codec, saveParam);
                             f.CroppedImageData = ms.ToArray();
                         }
+                    }
+                }
+                else
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        bmp.Save(ms, codec, saveParam);
+                        f.CroppedImageData = ms.ToArray();
                     }
                 }
             }

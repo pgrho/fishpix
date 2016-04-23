@@ -243,3 +243,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Shipwreck.FishPix/Web.shipwreck.config

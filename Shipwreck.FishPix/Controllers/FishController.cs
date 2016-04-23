@@ -41,6 +41,7 @@ namespace Shipwreck.FishPix.Controllers
                 var l = new List<FishImage>(matches.Count);
 
                 var ub = new UriBuilder(Request.Url);
+                ub.Query = null;
 
                 foreach (Match m in matches)
                 {
@@ -49,7 +50,7 @@ namespace Shipwreck.FishPix.Controllers
                     var f = new FishImage()
                     {
                         Id = id,
-                        ImageUrl = ub.ToString(),
+                        ImageUrl = ub.Uri.ToString(),
                         JapaneseName = jd.Where(_ => _.Key > m.Index).OrderBy(_ => _.Key).FirstOrDefault().Value,
                         LatinName = ld.Where(_ => _.Key > m.Index).OrderBy(_ => _.Key).FirstOrDefault().Value
                     };
@@ -65,12 +66,7 @@ namespace Shipwreck.FishPix.Controllers
         {
             var f = await FishImageData.GetOrCreateAsync(id);
 
-            if (f.CroppedImageData != null)
-            {
-                return File(f.CroppedImageData, "image/jpeg");
-            }
-
-            return Redirect(f.OriginalUrl);
+            return File(f.CroppedImageData, "image/jpeg");
         }
 
         public async Task<ActionResult> OriginalImage(string id)
