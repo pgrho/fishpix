@@ -13,7 +13,7 @@ namespace Shipwreck.FishPix.Controllers
 {
     public class FishController : Controller
     {
-        public async Task<ActionResult> Image(
+        public async Task<ActionResult> Search(
                                    int start = 1,
                                    string name = null, MatchOperator nameOperator = MatchOperator.Equal,
                                    string species = null, MatchOperator speciesOperator = MatchOperator.Equal,
@@ -40,13 +40,16 @@ namespace Shipwreck.FishPix.Controllers
 
                 var l = new List<FishImage>(matches.Count);
 
+                var ub = new UriBuilder(Request.Url);
+
                 foreach (Match m in matches)
                 {
                     var id = m.Groups[1].Value;
+                    ub.Path = Url.Action("Image", new { id = id });
                     var f = new FishImage()
                     {
                         Id = id,
-                        ImageUrl = $"http:/" + $"/fishpix.kahaku.go.jp/photos/{id.Substring(0, 6)}/{id}AF.jpg",
+                        ImageUrl = ub.ToString(),
                         JapaneseName = jd.Where(_ => _.Key > m.Index).OrderBy(_ => _.Key).FirstOrDefault().Value,
                         LatinName = ld.Where(_ => _.Key > m.Index).OrderBy(_ => _.Key).FirstOrDefault().Value
                     };
@@ -56,6 +59,25 @@ namespace Shipwreck.FishPix.Controllers
 
                 return Json(new FishImageResult() { Items = l }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public async Task<ActionResult> Image(string id)
+        {
+            var f = await FishImageData.GetOrCreateAsync(id);
+
+            if (f.CroppedImageData != null)
+            {
+                return File(f.CroppedImageData, "image/jpeg");
+            }
+
+            return Redirect(f.OriginalUrl);
+        }
+
+        public async Task<ActionResult> OriginalImage(string id)
+        {
+            var f = await FishImageData.GetOrCreateAsync(id);
+
+            return Redirect(f.OriginalUrl);
         }
 
         private static void AppendQueryParameter(StringBuilder sb, string key, string value, MatchOperator @operator)
