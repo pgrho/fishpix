@@ -40,7 +40,7 @@ namespace Shipwreck.FishPix.Controllers
 
                 var l = new List<FishImage>(matches.Count);
 
-                var ub = new UriBuilder(Request.Url);
+                var ub = new UriBuilder(Request.Headers["X-Original-URL"] ?? Request.Url.ToString());
                 ub.Query = null;
 
                 foreach (Match m in matches)
